@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('kategori_id');
             $table->unsignedBigInteger('user_id');
-            $table->boolean('status');
+            $table->boolean('status', [0, 1])->default(1);
             $table->string('nama_produk');
             $table->text('detail');
             $table->double('harga');

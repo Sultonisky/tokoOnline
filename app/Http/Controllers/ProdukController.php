@@ -51,7 +51,7 @@ class ProdukController extends Controller
             'foto.image' => 'Format gambar gunakan file dengan ekstensi jpeg, jpg, png, atau gif.',
             'foto.max' => 'Ukuran file gambar Maksimal adalah 1024 KB.'
         ]);
-        $validatedData['status'] = 0;
+        $validatedData['status'] = 1;
 
         // Tambahkan user_id dari user yang login
         $validatedData['user_id'] = auth()->id();
@@ -271,6 +271,42 @@ class ProdukController extends Controller
                 unlink($thumbnailSm);
             }
         }
+    }
+
+    public function detail($id)
+    {
+        $fotoProdukTambahan = FotoProduk::where('produk_id', $id)->get();
+        $detail = Produk::findOrFail($id);
+        $kategori = Kategori::orderBy('nama_kategori', 'desc')->get();
+        return view('frontend.v_produk.detail', [
+            'judul' => 'Detail Produk',
+            'kategori' => $kategori,
+            'row' => $detail,
+            'fotoProdukTambahan' => $fotoProdukTambahan
+        ]);
+    }
+
+    public function produkKategori($id)
+    {
+        $kategori = Kategori::orderBy('nama_kategori', 'desc')->get();
+        $produk = Produk::where('kategori_id', $id)->where('status', 1)
+            ->orderBy('updated_at', 'desc')->paginate(6);
+        return view('frontend.v_produk.produkkategori', [
+            'judul' => 'Filter Kategori',
+            'kategori' => $kategori,
+            'produk' => $produk,
+        ]);
+    }
+
+    public function produkAll()
+    {
+        $kategori = Kategori::orderBy('nama_kategori', 'desc')->get();
+        $produk = Produk::where('status', 1)->orderBy('updated_at', 'desc')->paginate(6);
+        return view('frontend.v_produk.index', [
+            'judul' => 'Semua Produk',
+            'kategori' => $kategori,
+            'produk' => $produk,
+        ]);
     }
 
     // Method untuk Form Laporan Produk 
